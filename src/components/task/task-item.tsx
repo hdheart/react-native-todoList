@@ -13,7 +13,7 @@ import {
   Icon,
   IconButton,
 } from "native-base";
-import AnimatedCheckBox from "./animated-checkbox";
+import AnimatedCheckBox from "../animated-checkbox";
 import { StackActions } from "@react-navigation/native";
 import { Ionicons, AntDesign, MaterialIcons } from "@expo/vector-icons";
 

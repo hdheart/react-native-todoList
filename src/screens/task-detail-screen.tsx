@@ -1,5 +1,5 @@
 import * as React from 'react'
-import TaskItemDetail from '../components/task-item-detail'
+import TaskItemDetail from '../components/task/task-item-detail'
 const TaskDetailScreen = ({navigation, route}: any) => {
     return (<TaskItemDetail
         navigation={navigation}

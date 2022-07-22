@@ -14,7 +14,7 @@ import {
 import { StackActions } from "@react-navigation/native";
 import { Ionicons, AntDesign, MaterialIcons } from "@expo/vector-icons";
 import TaskItem from "./task-item";
-import { storeData, getData} from '../utils/asyncStorage'
+import { storeData, getData} from '../../utils/asyncStorage'
 const TaskItemDetail = ({ navigation, route }: any) => {
   // console.log(route.params);
 
@@ -22,35 +22,12 @@ const TaskItemDetail = ({ navigation, route }: any) => {
   const [isChecked, setChecked] = useState(isCompleted);
   const [subject, setSubject] = useState(title);
   const [isEditing, setEditing] = useState(false);
-
-  // const storeData = async (value: object) => {
-  //   try {
-  //     const jsonValue = JSON.stringify(value)
-  //     console.log('jsonValue',jsonValue)
-  //     await AsyncStorage.setItem('@storage_Key', jsonValue)
-  //   } catch (e) {
-  //     // saving error
-  //   }
-  // }
-
-  // const getData = async () => {
-  //   try {
-  //     const jsonValue = await AsyncStorage.getItem('@storage_Key')
-  //     console.log('getdata',jsonValue)
-  //     return jsonValue != null ? JSON.parse(jsonValue) : null;
-  //   } catch(e) {
-  //     // error reading value
-  //   }
-  // }
   
-
-
   const onChangeCheckBox = () => {
     setChecked(!isChecked);
   };
 
   const handleChangeSubject = (text:string) => {
-    console.log('text', text)
     setSubject(text)
   };
 
@@ -68,10 +45,12 @@ const TaskItemDetail = ({ navigation, route }: any) => {
       id,
       title: subject,
       isCompleted: isChecked, 
-      priority
+      priority,
+      isEditing
 
     }]
     storeData('@taskList', data)
+    navigation.dispatch(StackActions.popToTop())
   }
   return (
     <VStack h="100%" minH={700}>
@@ -120,22 +99,10 @@ const TaskItemDetail = ({ navigation, route }: any) => {
               {subject}
             </Text>
           )}
+          <Text>
+              do something else
 
-          <HStack alignItems="center">
-            <Text flex={1}>today At 16:30</Text>
-
-            <Button
-              mr={2}
-              size="sm"
-              leftIcon={
-                <Icon as={Ionicons} name="flag-outline" size="sm" opacity={1} />
-              }
-            >
-              <Text color="white" fontSize={16}>
-                {priority}
-              </Text>
-            </Button>
-          </HStack>
+          </Text>
         </VStack>
       </HStack>
 
