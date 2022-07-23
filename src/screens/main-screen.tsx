@@ -25,7 +25,8 @@ import {
   useFocusEffect,
 } from "@react-navigation/native";
 import shortid from "shortid";
-import TaskModal from '../components/task/task-modal'
+import TaskModal from "../components/task/task-modal";
+import TaskDetailModal from "../components/task/task-detail-modal"
 
 interface List {
   id: string;
@@ -38,14 +39,14 @@ interface List {
 export default function MainScreen(props: any) {
   const { navigation } = props;
   const [list, setList] = useState<List[]>([]);
-  const [showModal, setShowMModal] = useState(false)
+  const [showModal, setShowMModal] = useState(false);
 
   const route = useRoute();
-  useEffect(() => {
-    fetchData().catch((e) => {
-      console.log(e, "error");
-    });
-  }, []);
+  // useEffect(() => {
+  //   fetchData().catch((e) => {
+  //     console.log(e, "error");
+  //   });
+  // }, []);
   useFocusEffect(
     useCallback(() => {
       fetchData().catch((e) => {
@@ -72,6 +73,7 @@ export default function MainScreen(props: any) {
       const index = prevList.findIndex((item) => item.id === id);
 
       newList[index].isEditing = !newList[index].isEditing;
+      storeData('@taskList', newList)
       return newList;
     });
   }, []);
@@ -80,6 +82,7 @@ export default function MainScreen(props: any) {
       const newList = [...prevList];
       const index = prevList.findIndex((item) => item.id === id);
       newList[index].isCompleted = !newList[index].isCompleted;
+      storeData('@taskList', newList)
       return newList;
     });
   }, []);
@@ -88,64 +91,71 @@ export default function MainScreen(props: any) {
       const newList = [...prevList];
       const index = prevList.findIndex((item) => item.id === id);
       newList[index].isEditing = !newList[index].isEditing;
+      storeData('@taskList', newList)
       return newList;
     });
   }, []);
 
-  const handleSaveModal =useCallback(()=> {
-    setShowMModal(false)
-  },[])
-  const handleCancelModal =useCallback(()=> {
-    setShowMModal(false)
-  },[])
+  const handleSaveModal = useCallback((data) => {
+    setShowMModal(false);
+    setList(data);
+    storeData("@taskList", data);
+  }, []);
+  const handleCancelModal = useCallback(() => {
+    setShowMModal(false);
+  }, []);
 
   const onPressFab = () => {
-    setShowMModal(true)
-  }
+    setShowMModal(true);
+  };
   return (
-    list.length !== 0 && (
-      <Center
-        _dark={{ bg: "blueGray.900" }}
-        _light={{ bg: "blueGray.50" }}
-        px={4}
-        flex={1}
-      >
-        <VStack pt={5} w="90%" space={2} alignItems="center">
-          <Heading size="md"> Tasks</Heading>
-          {list.map((item, index) => (
-            <TaskItem
-              id={item.id}
-              data={item}
-              key={item + index.toString()}
-              isDone={item.isCompleted}
-              subject={item.title}
-              isEditing={item.isEditing}
-              priority={item.priority}
-              onChangeSubject={onChangeSubject}
-              onFinishEditing={onFinishEditing}
-              onChangeCheckBox={handleCheckBox}
-              onPressText={handlePressText}
-              navigation={navigation}
-              route={route}
-            />
-          ))}
-        </VStack>
+    <Center
+      _dark={{ bg: "blueGray.900" }}
+      _light={{ bg: "blueGray.50" }}
+      px={4}
+      flex={1}
+    >
+      <VStack pt={5} w="90%" space={2} alignItems="center">
+        <Heading size="md"> Tasks</Heading>
+        {list.map((item, index) => (
+          <TaskItem
+            id={item.id}
+            data={item}
+            key={item + index.toString()}
+            isDone={item.isCompleted}
+            subject={item.title}
+            isEditing={item.isEditing}
+            priority={item.priority}
+            onChangeSubject={onChangeSubject}
+            onFinishEditing={onFinishEditing}
+            onChangeCheckBox={handleCheckBox}
+            onPressText={handlePressText}
+            navigation={navigation}
+            route={route}
+          />
+        ))}
+      </VStack>
 
-        <Fab
-          position="relative"
-          // display="true"
-          right={0}
-          bottom={0}
-          left={0}
-          margin="auto"
-          mb={4}
-          renderInPortal={false}
-          shadow={2}
-          icon={<Icon color="white" as={<AntDesign name="plus" />} size="lg" />}
-          onPress={onPressFab}
-        />
-        <TaskModal isOpen={showModal} onSaveModal={handleSaveModal} onCancelModal={handleCancelModal}></TaskModal>
-      </Center>
-    )
+      <Fab
+        position="relative"
+        // display="true"
+        right={0}
+        bottom={0}
+        left={0}
+        margin="auto"
+        mb={4}
+        renderInPortal={false}
+        shadow={2}
+        icon={<Icon color="white" as={<AntDesign name="plus" />} size="lg" />}
+        onPress={onPressFab}
+      />
+      <TaskModal
+        isOpen={showModal}
+        data={list}
+        onSaveModal={handleSaveModal}
+        onCancelModal={handleCancelModal}
+      ></TaskModal>
+    
+    </Center>
   );
 }

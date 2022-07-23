@@ -12,17 +12,17 @@ const tab = createBottomTabNavigator();
 
 const App = () => {
 
-  const HomeStack =  createNativeStackNavigator()
-  function HomeStackScreen() {
-    return (
-      <HomeStack.Navigator screenOptions={{
-        headerShown: false
-      }}>
-        <HomeStack.Screen   name="Index" component={MainScreen} />
-        <HomeStack.Screen name="Detail"component={TaskDetailScreen} />
-      </HomeStack.Navigator>
-    )
-  }
+  // const HomeStack =  createNativeStackNavigator()
+  // function HomeStackScreen() {
+  //   return (
+  //     <HomeStack.Navigator screenOptions={{
+  //       headerShown: false
+  //     }}>
+  //       <HomeStack.Screen   name="Index" component={MainScreen} />
+  //       <HomeStack.Screen name="Detail"component={TaskDetailScreen} />
+  //     </HomeStack.Navigator>
+  //   )
+  // }
 
   return (
     <tab.Navigator
@@ -63,7 +63,7 @@ const App = () => {
 
       })}
     >
-      <tab.Screen name="Home"  component={HomeStackScreen}></tab.Screen>
+      <tab.Screen name="Home"  component={MainScreen}></tab.Screen>
       <tab.Screen name="About" component={AboutScreen}></tab.Screen>
       <tab.Screen name="Porfile" component={PorfileScreen}></tab.Screen>
 

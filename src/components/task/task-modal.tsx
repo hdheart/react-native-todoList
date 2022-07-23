@@ -1,47 +1,45 @@
 //@ts-nocheck
 
 import { Modal,FormControl,Input,Button } from "native-base";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getData, storeData } from "../../utils/asyncStorage";
 import shortid from "shortid";
 
 interface Props {
   isOpen: boolean;
-  onSaveModal: () => void;
+  onSaveModal: (data: array) => void;
   onCancelModal: () => void;
+  data: array
 }
 
 const TaskModal = (props: Props) => {
-  const { isOpen,onSaveModal,onCancelModal } = props;
+  const { isOpen,onSaveModal,onCancelModal,data } = props;
   const [ title, setTitle ]= useState('')
   const [ content, setContent ] =useState('')
-  const [ list, setList ]= useState({}) 
+
 
   const handleTitlechange = (text) => {
-    console.log('thandleTitlechangeext', text)
     setTitle(text)
+
   }
   const handleContentchange = (text) => {
-    console.log('handleContentchange', text)
     setContent(text)
+
   }
 
-  const handleSaveModal = useCallback(async()=> {
-    setList({
+  const handleSaveModal =()=> {
+    const newData = {
         id:shortid.generate(),
-        title,
-        content,
+        title:title,
+        content: content,
         priorty: 1,
         isCompleted: false,
         isEditing: false
-    })
-    const prevData =await getData('@taskList')
-    console.log('list', list)
-    console.log('prevData',prevData)
-
-    // storeData( )
-    onSaveModal()
-  },[onSaveModal])
+    }
+    const newList = [...data, newData]
+    onSaveModal(newList)
+  
+  }
   return (
     <>
       <Modal isOpen={isOpen} onClose={() => onCancelModal(false)} safeAreaTop={true}>

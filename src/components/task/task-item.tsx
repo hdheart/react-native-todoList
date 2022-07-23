@@ -16,11 +16,12 @@ import {
 import AnimatedCheckBox from "../animated-checkbox";
 import { StackActions } from "@react-navigation/native";
 import { Ionicons, AntDesign, MaterialIcons } from "@expo/vector-icons";
+import TaskDetailModal from "./task-detail-modal";
 
 interface Props {
   isDone: boolean;
   id: string;
-  data: object
+  data: object;
   subject: string;
   isEditing?: boolean;
   priority: number;
@@ -45,15 +46,24 @@ const TaskItem = (props: Props) => {
     onPressText,
     navigation,
     route,
-    data
+    data,
   } = props;
+  const [editOpen, setEditOpen] = useState(false);
   const handleChangeSubject = useCallback(
     (text) => {
       onChangeSubject && onChangeSubject(id, text);
     },
     [onChangeSubject]
   );
-
+  const onEditModal = () => {
+    setEditOpen(false);
+  };
+  const onEditCancelModal = () => {
+    setEditOpen(false);
+  };
+  const onEditSaveModal = () => {
+    setEditOpen(false);
+  };
   return (
     <HStack
       key={id}
@@ -98,11 +108,11 @@ const TaskItem = (props: Props) => {
           </Text>
         )}
 
-        <HStack alignItems="center" >
+        <HStack alignItems="center">
           <Text flex={1}>today At 16:30</Text>
 
           <Button
-          mr={2}
+            mr={2}
             size="sm"
             leftIcon={
               <Icon as={Ionicons} name="flag-outline" size="sm" opacity={1} />
@@ -114,15 +124,20 @@ const TaskItem = (props: Props) => {
           </Button>
 
           <AntDesign
-            onPress={() =>
-              navigation.dispatch(StackActions.push("Detail", data))
-            }
+            onPress={() => setEditOpen(true)}
             name="edit"
             size={24}
             color="black"
           />
         </HStack>
       </VStack>
+      <TaskDetailModal
+        item={data}
+        editOpen={editOpen}
+        handleEditModal={onEditModal}
+        handelEditCancelModal={onEditCancelModal}
+        handelEditSaveModal={onEditSaveModal}
+      ></TaskDetailModal>
     </HStack>
   );
 };
