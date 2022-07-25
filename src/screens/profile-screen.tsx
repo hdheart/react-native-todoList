@@ -16,7 +16,6 @@ import { Ionicons } from "@expo/vector-icons";
 import ThemeToggle from "../components/theme-toggle";
 export default function PorfileScreen(props: any) {
   const { navigation } = props;
-  console.log(props, "po");
   return (
     <VStack
       px={6}

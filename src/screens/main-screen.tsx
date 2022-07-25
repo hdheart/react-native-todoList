@@ -26,7 +26,7 @@ import {
 } from "@react-navigation/native";
 import shortid from "shortid";
 import TaskModal from "../components/task/task-modal";
-import TaskDetailModal from "../components/task/task-detail-modal"
+import TaskDetailModal from "../components/task/task-detail-modal";
 
 interface List {
   id: string;
@@ -56,13 +56,16 @@ export default function MainScreen(props: any) {
   );
   const fetchData = async () => {
     const data = await getData("@taskList");
-    setList(data);
+    if(data == null) {
+      return 
+    }
+    setList(data)
   };
-  const onChangeSubject = useCallback((id, text) => {
+  const onChangeSubject = useCallback((id, subject) => {
     setList((prevList) => {
       const newList = [...prevList];
       const index = prevList.findIndex((item) => item.id === id);
-      newList[index].title = text;
+      newList[index].title = subject;
       return newList;
     });
   }, []);
@@ -71,9 +74,8 @@ export default function MainScreen(props: any) {
     setList((prevList) => {
       const newList = [...prevList];
       const index = prevList.findIndex((item) => item.id === id);
-
       newList[index].isEditing = !newList[index].isEditing;
-      storeData('@taskList', newList)
+      storeData("@taskList", newList);
       return newList;
     });
   }, []);
@@ -82,7 +84,7 @@ export default function MainScreen(props: any) {
       const newList = [...prevList];
       const index = prevList.findIndex((item) => item.id === id);
       newList[index].isCompleted = !newList[index].isCompleted;
-      storeData('@taskList', newList)
+      storeData("@taskList", newList);
       return newList;
     });
   }, []);
@@ -91,10 +93,18 @@ export default function MainScreen(props: any) {
       const newList = [...prevList];
       const index = prevList.findIndex((item) => item.id === id);
       newList[index].isEditing = !newList[index].isEditing;
-      storeData('@taskList', newList)
+      storeData("@taskList", newList);
       return newList;
     });
   }, []);
+  const handleDeleted =useCallback((id) =>{
+    setList((prevList)=> {
+      const newList = [...prevList]
+      const tempList =  newList.filter((item) => item.id !== id)
+      storeData("@taskList", tempList);
+      return tempList
+    })
+  },[])
 
   const handleSaveModal = useCallback((data) => {
     setShowMModal(false);
@@ -108,6 +118,16 @@ export default function MainScreen(props: any) {
   const onPressFab = () => {
     setShowMModal(true);
   };
+
+  const handleSaveItem = useCallback((items)=> {
+    setList(prevList=> {
+      const newList = [...prevList]
+      const index = prevList.findIndex(item => item.id == items.id)
+      newList[index] = items
+      storeData("@taskList", newList);
+      return newList
+    })
+  },[])
   return (
     <Center
       _dark={{ bg: "blueGray.900" }}
@@ -119,17 +139,14 @@ export default function MainScreen(props: any) {
         <Heading size="md"> Tasks</Heading>
         {list.map((item, index) => (
           <TaskItem
-            id={item.id}
-            data={item}
+            item={item}
             key={item + index.toString()}
-            isDone={item.isCompleted}
-            subject={item.title}
-            isEditing={item.isEditing}
-            priority={item.priority}
+            onSaveItem={handleSaveItem}
             onChangeSubject={onChangeSubject}
             onFinishEditing={onFinishEditing}
             onChangeCheckBox={handleCheckBox}
             onPressText={handlePressText}
+            onDeleted={handleDeleted}
             navigation={navigation}
             route={route}
           />
@@ -155,7 +172,6 @@ export default function MainScreen(props: any) {
         onSaveModal={handleSaveModal}
         onCancelModal={handleCancelModal}
       ></TaskModal>
-    
     </Center>
   );
 }

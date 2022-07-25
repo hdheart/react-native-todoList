@@ -19,35 +19,31 @@ import { Ionicons, AntDesign, MaterialIcons } from "@expo/vector-icons";
 import TaskDetailModal from "./task-detail-modal";
 
 interface Props {
-  isDone: boolean;
-  id: string;
-  data: object;
-  subject: string;
-  isEditing?: boolean;
-  priority: number;
-  onChangeSubject?: (id: string, subject: string) => void;
+  item: object | any;
+  onChangeSubject: (id: string, text: string) => void;
   onFinishEditing: (id: string) => void;
   onChangeCheckBox: (id: string) => void;
   onPressText: (id: string) => void;
+  onDeleted: (id: string) => void;
+  onSaveItem: (item: object)=> void
   navigation: any;
   route: any;
 }
 
 const TaskItem = (props: Props) => {
   const {
-    isDone,
-    subject,
-    isEditing,
     onChangeSubject,
     onFinishEditing,
-    id,
-    priority,
+    onDeleted,
     onChangeCheckBox,
     onPressText,
+    onSaveItem,
     navigation,
     route,
-    data,
+    item,
   } = props;
+  const { id, content, isCompleted, isEditing, priority, title } = item;
+
   const [editOpen, setEditOpen] = useState(false);
   const handleChangeSubject = useCallback(
     (text) => {
@@ -61,9 +57,11 @@ const TaskItem = (props: Props) => {
   const onEditCancelModal = () => {
     setEditOpen(false);
   };
-  const onEditSaveModal = () => {
+  const onEditSaveModal = useCallback(data => {
+    onSaveItem(data)
     setEditOpen(false);
-  };
+  },[]);
+
   return (
     <HStack
       key={id}
@@ -76,16 +74,16 @@ const TaskItem = (props: Props) => {
       space={2}
     >
       <Checkbox
-        isChecked={isDone}
+        isChecked={isCompleted}
         accessibilityLabel="taskCheck"
         onChange={() => onChangeCheckBox(id)}
-        value={subject}
+        value={title}
       ></Checkbox>
       <VStack flex={1}>
         {isEditing ? (
           <Input
             placeholder="task"
-            value={subject}
+            value={title}
             variant="unstyled"
             fontSize={14}
             size="xs"
@@ -102,41 +100,46 @@ const TaskItem = (props: Props) => {
             fontSize={19}
             // flex={1}
             onPress={() => onPressText(id)}
-            strikeThrough={isDone}
+            strikeThrough={isCompleted}
           >
-            {subject}
+            {title}
           </Text>
         )}
 
-        <HStack alignItems="center">
+        <HStack alignItems="center" space={3}>
           <Text flex={1}>today At 16:30</Text>
+            <Button
+              size="sm"
+              leftIcon={
+                <Icon as={Ionicons} name="flag-outline" size="sm" opacity={1} />
+              }
+            >
+              <Text color="white" fontSize={16}>
+                {priority}
+              </Text>
+            </Button>
 
-          <Button
-            mr={2}
-            size="sm"
-            leftIcon={
-              <Icon as={Ionicons} name="flag-outline" size="sm" opacity={1} />
-            }
-          >
-            <Text color="white" fontSize={16}>
-              {priority}
-            </Text>
-          </Button>
-
-          <AntDesign
-            onPress={() => setEditOpen(true)}
-            name="edit"
-            size={24}
-            color="black"
-          />
+            <AntDesign
+              onPress={() => setEditOpen(true)}
+              name="edit"
+              size={24}
+              color="black"
+            />
+            <AntDesign
+              name="delete"
+              size={24}
+              color="black"
+              onPress={() => onDeleted(id)}
+            />
         </HStack>
       </VStack>
       <TaskDetailModal
-        item={data}
+        item={item}
         editOpen={editOpen}
         handleEditModal={onEditModal}
         handelEditCancelModal={onEditCancelModal}
         handelEditSaveModal={onEditSaveModal}
+        handleDeleted={()=>onDeleted(id)}
       ></TaskDetailModal>
     </HStack>
   );
