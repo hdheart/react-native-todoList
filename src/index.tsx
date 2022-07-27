@@ -1,17 +1,16 @@
 // import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 import SettingScreen from "./screens/setting-screen";
-import AboutScreen from "./screens/about-screen";
+import FocusScreen from "./screens/focus-screen";
 import MainScreen from "./screens/main-screen";
 import PorfileScreen from "./screens/profile-screen";
-import TaskDetailScreen from "./screens/task-detail-screen"
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons,MaterialIcons } from "@expo/vector-icons";
+import { View } from "native-base";
 const tab = createBottomTabNavigator();
 
 const App = () => {
-
   // const HomeStack =  createNativeStackNavigator()
   // function HomeStackScreen() {
   //   return (
@@ -27,9 +26,8 @@ const App = () => {
   return (
     <tab.Navigator
       initialRouteName="Main"
-      screenOptions={
-        ( { route }) => ({
-        headerShown:false,
+      screenOptions={({ route }) => ({
+        headerShown: false,
         tabBarIcon: ({ focused, color, size }) => {
           if (route.name === "Home") {
             return (
@@ -39,16 +37,15 @@ const App = () => {
                 color={color}
               />
             );
-          } else if (route.name === "About") {
+          } else if (route.name === "Focus") {
             return (
-              <Ionicons
-                name={focused ? "ios-list" : "ios-home-outline"}
+              <MaterialIcons
+                name={focused ? "timer" : "timer"}
                 size={size}
                 color={color}
               />
             );
-          }
-          else if (route.name === "Porfile") {
+          } else if (route.name === "Porfile") {
             return (
               <Ionicons
                 name={focused ? "ios-list" : "ios-home-outline"}
@@ -58,15 +55,14 @@ const App = () => {
             );
           }
         },
-        tabBarInactiveTintColor: 'gray',
-        tabBarActiveTintColor: 'tomato',
-
+        tabBarInactiveTintColor: "gray",
+        // tabBarActiveTintColor: "tomato",
+        tabBarStyle: {position: 'absolute', bottom: 0,left: 0,right:0,maxHeight: 70}
       })}
     >
-      <tab.Screen name="Home"  component={MainScreen}></tab.Screen>
-      <tab.Screen name="About" component={AboutScreen}></tab.Screen>
-      <tab.Screen name="Porfile" component={PorfileScreen}></tab.Screen>
-
+        <tab.Screen name="Home" component={MainScreen}></tab.Screen>
+        <tab.Screen name="Focus" component={FocusScreen}></tab.Screen>
+        <tab.Screen name="Porfile" component={PorfileScreen}></tab.Screen>
     </tab.Navigator>
   );
 };

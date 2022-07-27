@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState,useCallback } from "react";
+import { useState, useCallback } from "react";
 import {
   Box,
   Center,
@@ -11,6 +11,7 @@ import {
   Checkbox,
   Input,
   Modal,
+  FormControl
 } from "native-base";
 import { Ionicons, AntDesign, MaterialIcons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -24,7 +25,6 @@ interface Props {
   handelEditCancelModal: () => void;
   handelEditSaveModal: (item: object) => void;
   handleDeleted: () => void;
-
 }
 
 const TaskDetailModal = (props: Props) => {
@@ -35,40 +35,39 @@ const TaskDetailModal = (props: Props) => {
     handelEditCancelModal,
     handelEditSaveModal,
     handleDeleted,
-  
   } = props;
-  const { id, content, isCompleted, isEditing, title, priority,category } = item;
-  const [_title, setTitle] =useState(title)
-  const [_content, setContent] =useState(content)
-  const [_isCompleted, setCompleted] = useState(isCompleted)
-  const [_isEditing, setEditng] = useState(isEditing)
-  const [_priority,setPriority] =useState(priority)
-  const [_cate,setCate] = useState(category? category: '')
- 
+  const { id, content, isCompleted, isEditing, title, priority, category } =
+    item;
+  const [_title, setTitle] = useState(title);
+  const [_content, setContent] = useState(content);
+  const [_isCompleted, setCompleted] = useState(isCompleted);
+  const [_isEditing, setEditng] = useState(isEditing);
+  const [_priority, setPriority] = useState(priority);
+  const [_cate, setCate] = useState(category ? category : "");
+
   const [date, setDate] = useState(new Date());
-  const [month, setMonth] =useState('')
-  const [time, setTime] = useState('');
+  const [month, setMonth] = useState("");
+  const [time, setTime] = useState("");
   const [mode, setMode] = useState("date");
   const [show, setShow] = useState(false);
 
-  const [isPriOpen, setPriOpen] = useState(false)
-  const [isCateOpen, setCateOpen] = useState(false)
-  
+  const [isPriOpen, setPriOpen] = useState(false);
+  const [isCateOpen, setCateOpen] = useState(false);
 
   const onChange = (event: any, selectedDate: any) => {
     const currentDate = selectedDate;
     setShow(false);
     if (mode == "date") {
-      let date = new Date(currentDate)
-      let months = date.getMonth()
-      let days = date.getDate()
-      setMonth(months + '/'+ days)
-      setDate(currentDate)
+      let date = new Date(currentDate);
+      let months = date.getMonth();
+      let days = date.getDate();
+      setMonth(months + "/" + days);
+      setDate(currentDate);
     } else if (mode == "time") {
-      let date = new Date(currentDate)
-      let hours = date.getHours()
-      let minutes = date.getMinutes()
-      setTime(hours+ ':' + minutes);
+      let date = new Date(currentDate);
+      let hours = date.getHours();
+      let minutes = date.getMinutes();
+      setTime(hours + ":" + minutes);
     }
   };
 
@@ -86,18 +85,18 @@ const TaskDetailModal = (props: Props) => {
   };
 
   const handleChangeCheckBox = () => {
-    setCompleted(!_isCompleted)
-  }
+    setCompleted(!_isCompleted);
+  };
   const handlePressText = () => {
-    setEditng(!_isEditing)
-  }
-  const handleChangeSubject = useCallback((text)=>{
-    setTitle(text)
-  },[])
+    setEditng(!_isEditing);
+  };
+  const handleChangeSubject = useCallback((text) => {
+    setTitle(text);
+  }, []);
   const onFinishEditing = () => {
-    setEditng(false)
-  }
-  const onEditSaveModal =() =>{
+    setEditng(false);
+  };
+  const onEditSaveModal = () => {
     const item = {
       id,
       title: _title,
@@ -106,32 +105,35 @@ const TaskDetailModal = (props: Props) => {
       category: _cate,
       isEditing: _isEditing,
       isCompleted: _isCompleted,
-    }
-    handelEditSaveModal(item)
-  }
+    };
+    handelEditSaveModal(item);
+  };
   // priority handle
-  const handlePriModalOpen=() =>{
-    setPriOpen(true)
-  }
-  const handlePriSave=useCallback((_priority) => {
-    setPriority(_priority)
-    setPriOpen(false)
-  },[])
-  const handlePriCancel=() => {
-    setPriOpen(false)
-  }
+  const handlePriModalOpen = () => {
+    setPriOpen(true);
+  };
+  const handlePriSave = useCallback((_priority) => {
+    setPriority(_priority);
+    setPriOpen(false);
+  }, []);
+  const handlePriCancel = () => {
+    setPriOpen(false);
+  };
 
-    // category handle
-    const handleCateModalOpen=() =>{
-      setCateOpen(true)
-    }
-    const handleCateSave=useCallback((_cate) => {
-      setCate(_cate)
-      setCateOpen(false)
-    },[])
-    const handleCateCancel=() => {
-      setCateOpen(false)
-    }
+  // category handle
+  const handleCateModalOpen = () => {
+    setCateOpen(true);
+  };
+  const handleCateSave = useCallback((cate) => {
+    setCate(cate);
+    setCateOpen(false);
+  }, []);
+  const handleCateCancel = () => {
+    setCateOpen(false);
+  };
+  const handleContentchange= useCallback((text) =>{
+    setContent(text)
+  },[_content])
 
   return (
     <Modal
@@ -189,7 +191,10 @@ const TaskDetailModal = (props: Props) => {
                     {_title}
                   </Text>
                 )}
-                <Text>{_content}</Text>
+                <FormControl mt="3">
+            <FormControl.Label>Content</FormControl.Label>
+            <Input value={_content} onChangeText={handleContentchange} />
+          </FormControl>
               </VStack>
             </HStack>
 
@@ -234,7 +239,9 @@ const TaskDetailModal = (props: Props) => {
                 <Text flex={1}>Task Category</Text>
                 <Button
                   mr={2}
-                  onPress={()=> {handleCateModalOpen()}}
+                  onPress={() => {
+                    handleCateModalOpen();
+                  }}
                   size="sm"
                   leftIcon={
                     <Icon
@@ -248,7 +255,7 @@ const TaskDetailModal = (props: Props) => {
                   {_cate}
                 </Button>
               </HStack>
-              <HStack  space={4} alignItems="center" justifyContent="flex-start">
+              <HStack space={4} alignItems="center" justifyContent="flex-start">
                 <AntDesign name="edit" size={24} color="black" />
                 <Text flex={1}>Task priority</Text>
                 <Button
@@ -313,12 +320,10 @@ const TaskDetailModal = (props: Props) => {
         onSaveModal={handlePriSave}
       ></TaskpriorityModal>
       <TaskCategoryModal
-      isOpen={isCateOpen}
-      onCancelModal={handleCateCancel}
-      onSaveModal={handleCateSave}
-      >
-
-      </TaskCategoryModal>
+        isOpen={isCateOpen}
+        onCancelModal={handleCateCancel}
+        onSaveModal={handleCateSave}
+      />
     </Modal>
   );
 };

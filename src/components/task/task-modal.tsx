@@ -40,9 +40,11 @@ const TaskModal = (props: Props) => {
       cateGory:cate,
       isCompleted: false,
       isEditing: false,
+      
     };
     if (Object.keys(data).length !== 0) {
-      const newList = [...data, newData];
+      const newList = [...data];
+      newList.unshift(newData)
       onSaveModal(newList);
     } else if (Object.keys(data).length === 0) {
       const newList = [];

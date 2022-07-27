@@ -15,6 +15,7 @@ import {
   Heading,
   Pressable,
   Button,
+  ScrollView,
 } from "native-base";
 import { AntDesign } from "@expo/vector-icons";
 import ThemeToggle from "../components/theme-toggle";
@@ -27,7 +28,8 @@ import {
 import shortid from "shortid";
 import TaskModal from "../components/task/task-modal";
 import TaskDetailModal from "../components/task/task-detail-modal";
-
+import Masthead from "../components/masthead";
+import AnimateColorBox from "../components/task/animated-color-box";
 interface List {
   id: string;
   isCompleted: boolean;
@@ -56,10 +58,10 @@ export default function MainScreen(props: any) {
   );
   const fetchData = async () => {
     const data = await getData("@taskList");
-    if(data == null) {
-      return 
+    if (data == null) {
+      return;
     }
-    setList(data)
+    setList(data);
   };
   const onChangeSubject = useCallback((id, subject) => {
     setList((prevList) => {
@@ -97,14 +99,14 @@ export default function MainScreen(props: any) {
       return newList;
     });
   }, []);
-  const handleDeleted =useCallback((id) =>{
-    setList((prevList)=> {
-      const newList = [...prevList]
-      const tempList =  newList.filter((item) => item.id !== id)
+  const handleDeleted = useCallback((id) => {
+    setList((prevList) => {
+      const newList = [...prevList];
+      const tempList = newList.filter((item) => item.id !== id);
       storeData("@taskList", tempList);
-      return tempList
-    })
-  },[])
+      return tempList;
+    });
+  }, []);
 
   const handleSaveModal = useCallback((data) => {
     setShowMModal(false);
@@ -119,50 +121,66 @@ export default function MainScreen(props: any) {
     setShowMModal(true);
   };
 
-  const handleSaveItem = useCallback((items)=> {
-    setList(prevList=> {
-      const newList = [...prevList]
-      const index = prevList.findIndex(item => item.id == items.id)
-      newList[index] = items
+  const handleSaveItem = useCallback((items) => {
+    setList((prevList) => {
+      const newList = [...prevList];
+      const index = prevList.findIndex((item) => item.id == items.id);
+      newList[index] = items;
       storeData("@taskList", newList);
-      return newList
-    })
-  },[])
+      return newList;
+    });
+  }, []);
   return (
-    <Center
-      _dark={{ bg: "blueGray.900" }}
-      _light={{ bg: "blueGray.50" }}
-      px={4}
+    <AnimateColorBox
       flex={1}
+      bg={useColorModeValue("warmGray.50", "primary.900")}
+      w="full"
     >
-      <VStack pt={5} w="90%" space={2} alignItems="center">
-        <Heading size="md"> Tasks</Heading>
-        {list.map((item, index) => (
-          <TaskItem
-            item={item}
-            key={item + index.toString()}
-            onSaveItem={handleSaveItem}
-            onChangeSubject={onChangeSubject}
-            onFinishEditing={onFinishEditing}
-            onChangeCheckBox={handleCheckBox}
-            onPressText={handlePressText}
-            onDeleted={handleDeleted}
-            navigation={navigation}
-            route={route}
-          />
-        ))}
+      <VStack>
+        <Masthead
+          title="hi"
+          image={require("../assets/masthead.png")}
+        ></Masthead>
       </VStack>
+      <ScrollView mb={150} mt="-20px" _contentContainerStyle={{}}>
+        <VStack
+          p={4}
+          w="100%"
+          space={2}
+          bg="white"
+          // mt="-20px"
+          borderTopLeftRadius="20px"
+          borderTopRightRadius="20px"
+          borderBottomRadius="20px"
+        >
+          {list.map((item, index) => (
+            <TaskItem
+              item={item}
+              key={item + index.toString()}
+              onSaveItem={handleSaveItem}
+              onChangeSubject={onChangeSubject}
+              onFinishEditing={onFinishEditing}
+              onChangeCheckBox={handleCheckBox}
+              onPressText={handlePressText}
+              onDeleted={handleDeleted}
+              navigation={navigation}
+              route={route}
+            />
+          ))}
+        </VStack>
+      </ScrollView>
 
       <Fab
-        position="relative"
+        position="absolute"
         // display="true"
-        right={0}
-        bottom={0}
-        left={0}
-        margin="auto"
-        mb={4}
+        // right={0}
+        // bottom={0}
+        // left={0}
+        // margin="auto"
+        mb={10}
         renderInPortal={false}
         shadow={2}
+        size="sm"
         icon={<Icon color="white" as={<AntDesign name="plus" />} size="lg" />}
         onPress={onPressFab}
       />
@@ -172,6 +190,6 @@ export default function MainScreen(props: any) {
         onSaveModal={handleSaveModal}
         onCancelModal={handleCancelModal}
       ></TaskModal>
-    </Center>
+    </AnimateColorBox>
   );
 }
